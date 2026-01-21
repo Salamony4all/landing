@@ -143,6 +143,8 @@ const renderCards = () => {
   cards.forEach((card) => {
     const cardEl = document.createElement("article");
     cardEl.className = "card";
+    cardEl.draggable = true;
+    cardEl.dataset.cardId = card.id;
 
     const thumb = document.createElement("img");
     thumb.className = "card-thumb";
@@ -181,8 +183,52 @@ const renderCards = () => {
 
     cardEl.appendChild(thumb);
     cardEl.appendChild(body);
+    cardEl.addEventListener("dragstart", handleDragStart);
+    cardEl.addEventListener("dragover", handleDragOver);
+    cardEl.addEventListener("drop", handleDrop);
+    cardEl.addEventListener("dragend", handleDragEnd);
     grid.appendChild(cardEl);
   });
+};
+
+let draggedCardId = null;
+
+const handleDragStart = (event) => {
+  draggedCardId = event.currentTarget.dataset.cardId;
+  event.currentTarget.classList.add("is-dragging");
+  event.dataTransfer.effectAllowed = "move";
+};
+
+const handleDragOver = (event) => {
+  event.preventDefault();
+  const target = event.currentTarget;
+  if (!target || target.dataset.cardId === draggedCardId) return;
+  target.classList.add("is-drag-over");
+  event.dataTransfer.dropEffect = "move";
+};
+
+const handleDrop = (event) => {
+  event.preventDefault();
+  const targetId = event.currentTarget.dataset.cardId;
+  if (!draggedCardId || draggedCardId === targetId) return;
+
+  const fromIndex = cards.findIndex((card) => card.id === draggedCardId);
+  const toIndex = cards.findIndex((card) => card.id === targetId);
+  if (fromIndex === -1 || toIndex === -1) return;
+
+  const [moved] = cards.splice(fromIndex, 1);
+  cards.splice(toIndex, 0, moved);
+  renderCards();
+  renderList();
+  saveState();
+};
+
+const handleDragEnd = (event) => {
+  event.currentTarget.classList.remove("is-dragging");
+  document.querySelectorAll(".card.is-drag-over").forEach((el) => {
+    el.classList.remove("is-drag-over");
+  });
+  draggedCardId = null;
 };
 
 const renderList = () => {
