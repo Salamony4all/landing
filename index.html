@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Experience App</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <button class="icon-button" id="open-settings" aria-label="Open settings">
+        <span class="hamburger">
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+      <div class="brand">
+        <span class="brand-mark">◎</span>
+        <span class="brand-text">Experience App</span>
+      </div>
+    </header>
+
+    <main class="hero">
+      <p class="hero-eyebrow">Experience App</p>
+      <h1 id="hero-title">
+        Experience my Automated workflow Apps
+      </h1>
+      <p class="hero-subtitle" id="hero-subtitle">
+        A curated launchpad of automated workflow experiences built to streamline
+        your operations, insights, and delivery.
+      </p>
+    </main>
+
+    <section class="cards-section">
+      <div class="cards-header">
+        <h2>Applications</h2>
+      </div>
+      <div id="cards-grid" class="cards-grid" aria-live="polite"></div>
+    </section>
+
+    <aside class="settings-drawer" id="settings-drawer" aria-hidden="true">
+      <div class="settings-header">
+        <h3>Settings</h3>
+        <button class="icon-button" id="close-settings" aria-label="Close settings">
+          ✕
+        </button>
+      </div>
+
+      <div class="settings-body">
+        <form id="card-form" class="settings-form">
+          <div class="settings-block">
+            <h4>Page content</h4>
+            <label>
+              Main heading
+              <input
+                type="text"
+                id="page-title"
+                value="Experience my Automated workflow Apps"
+              />
+            </label>
+            <label>
+              Description
+              <textarea
+                id="page-description"
+                rows="3"
+              >A curated launchpad of automated workflow apps built to streamline
+your operations, insights, and delivery.</textarea>
+            </label>
+          </div>
+
+          <div class="settings-block is-hidden" id="card-editor">
+            <div class="settings-block-header">
+              <h4>Card details</h4>
+              <button type="button" class="icon-button" id="close-card-editor" aria-label="Hide card editor">
+                ✕
+              </button>
+            </div>
+          <input type="hidden" id="card-id" />
+          <label>
+            App name
+            <input type="text" id="card-name" placeholder="Experience Studio" required />
+          </label>
+          <label>
+            Subtitle
+            <input type="text" id="card-subtitle" placeholder="Automation for every team" />
+          </label>
+          <label>
+            App link
+            <input type="url" id="card-link" placeholder="https://example.com" required />
+          </label>
+          <label>
+            Thumbnail URL (optional)
+            <input type="url" id="card-thumb" placeholder="https://..." />
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="primary-btn">Save</button>
+            <button type="button" class="ghost-btn" id="reset-form">Clear</button>
+          </div>
+          </div>
+        </form>
+
+        <div class="settings-list">
+          <div class="settings-list-header">
+            <h4>Manage cards</h4>
+            <button type="button" class="ghost-btn" id="add-card-btn">Add Card</button>
+          </div>
+          <div id="cards-list"></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="backdrop" id="backdrop" aria-hidden="true"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
