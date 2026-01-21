@@ -1,4 +1,4 @@
-const cards = [
+let cards = [
   {
     id: "exp-1",
     name: "Experience Studio",
@@ -70,6 +70,72 @@ const buildThumbUrl = (card) => {
     return card.thumbnailUrl;
   }
   return `${thumbnailService}${card.link}`;
+};
+
+const createId = () => `exp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+const normalizeCard = (card, index) => ({
+  id: card.id || `${createId()}-${index}`,
+  name: card.name || "Untitled App",
+  subtitle: card.subtitle || "",
+  link: card.link || "#",
+  thumbnailUrl: card.thumbnailUrl || "",
+});
+
+const getState = () => ({
+  heroTitle: heroTitle.textContent.trim(),
+  heroSubtitle: heroSubtitle.textContent.trim(),
+  cards,
+});
+
+const applyState = (state) => {
+  if (!state) return;
+  if (state.heroTitle) {
+    heroTitle.textContent = state.heroTitle;
+    pageTitleInput.value = state.heroTitle;
+  }
+  if (state.heroSubtitle) {
+    heroSubtitle.textContent = state.heroSubtitle;
+    pageDescriptionInput.value = state.heroSubtitle;
+  }
+  if (Array.isArray(state.cards) && state.cards.length) {
+    cards = state.cards.map(normalizeCard);
+  }
+  renderCards();
+  renderList();
+};
+
+const loadState = async () => {
+  try {
+    const response = await fetch("/api/state");
+    if (!response.ok) return;
+    const state = await response.json();
+    applyState(state);
+  } catch (error) {
+    console.warn("Failed to load saved state.", error);
+  }
+};
+
+const saveState = async () => {
+  try {
+    await fetch("/api/state", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(getState()),
+    });
+  } catch (error) {
+    console.warn("Failed to save state.", error);
+  }
+};
+
+let saveTimer = null;
+const scheduleSave = () => {
+  if (saveTimer) {
+    window.clearTimeout(saveTimer);
+  }
+  saveTimer = window.setTimeout(() => {
+    saveState();
+  }, 500);
 };
 
 const renderCards = () => {
@@ -196,6 +262,7 @@ const upsertCard = (payload) => {
   }
   renderCards();
   renderList();
+  saveState();
 };
 
 const removeCard = (id) => {
@@ -205,6 +272,7 @@ const removeCard = (id) => {
   }
   renderCards();
   renderList();
+  saveState();
 };
 
 const openDrawer = () => {
@@ -239,17 +307,19 @@ addCardBtn.addEventListener("click", () => {
 pageTitleInput.addEventListener("input", () => {
   heroTitle.textContent =
     pageTitleInput.value.trim() || "Experience my Automated workflow Apps";
+  scheduleSave();
 });
 
 pageDescriptionInput.addEventListener("input", () => {
   heroSubtitle.textContent =
     pageDescriptionInput.value.trim() ||
     "A curated launchpad of automated workflow apps built to streamline your operations, insights, and delivery.";
+  scheduleSave();
 });
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  const id = idInput.value || `exp-${Date.now()}`;
+  const id = idInput.value || createId();
   upsertCard({
     id,
     name: nameInput.value.trim(),
@@ -262,3 +332,4 @@ form.addEventListener("submit", (event) => {
 
 renderCards();
 renderList();
+loadState();
