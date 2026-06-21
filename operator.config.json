@@ -1,0 +1,21 @@
+{
+  "appName": "landing",
+  "validation": {
+    "testCommand": "",
+    "buildValidation": ""
+  },
+  "deployment": {
+    "target": "vercel",
+    "vercel": {
+      "projectId": "auto_resolved",
+      "orgId": "auto_resolved"
+    },
+    "railway": {
+      "serviceId": "auto_resolved"
+    }
+  },
+  "selfHealing": {
+    "maxAttempts": 5,
+    "criticalFiles": []
+  }
+}
